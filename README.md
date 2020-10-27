@@ -1,2 +1,2 @@
 # twitter_bot
-Automated posts on Twitter using OAuth1.0 and pythonanywhere
+An automated bot that posts daily images from APOD website. 
