@@ -2,6 +2,7 @@ import datetime
 import os
 import requests
 import tweepy
+from PIL import Image
 
 # Get your own keys from developer.twitter.com
 # You can find a detailed tutorial about authenticating accounts from github.com/gultugaydemir/Twitter_OAuth1.0a
@@ -23,8 +24,8 @@ data = response.json()  # Converts the data to JSON format so that we can retrie
 description = data["title"] # Getting the title of the photo.
 date = datetime.datetime.now().strftime("%y%m%d") # We need the {yymmdd} format for the source link.
 source = "https://apod.nasa.gov/apod/ap{date}.html".format(date=date) # Creating the source link for the posted photo.
-message = '"' + description + '" \n' + source # Preparing the status format.
-message_video = '"' + description + '" \n' # Preparing the status format for the YouTube tweets.
+message = '"' + description + '" \n' + source # The status format for the image tweets.
+message_video = '"' + description + '" \n' # The status format for the YouTube tweets.
 
 
 try:
@@ -33,7 +34,7 @@ except KeyError: # Code throws KeyError if a video is posted that day, since API
     image = data["url"] 
     image = image.replace("embed/", "watch?v=")
     api.update_status(status = message_video+ source + ' \n'+ image) # Bot only tweets the YouTube link and not a picture.
-    print("Video is posted")
+    print("Video tweeted successfully.")
     quit()
 
 # Tweepy's "update_with_media" function only allows us to tweet an image from the local directory.
@@ -66,8 +67,6 @@ def tweet_image(url, message):
             print(height)
             im_resize = im.resize((int(width*0.99999999999), int(height*0.99999999999)), Image.ANTIALIAS)
             im_resize.save(photo)
-
-
 
 
 tweet_image(image, message)  # Tweeting the picture with the status. Image URL and the status message are used as parameters.
