@@ -40,17 +40,33 @@ except KeyError: # Code throws KeyError if a video is posted that day, since API
 # Since posting the picture from a URL would be more practical, I'm using a function that will complete this step for me automatically.
 
 def tweet_image(url, message):
+    tweeted=False
     photo = 'photo.jpg'
     request = requests.get(url, stream=True)
     if request.status_code == 200:
         with open(photo, 'wb') as media:
             for url in request:
                 media.write(url)
-        api.update_with_media(photo, status=message)
-        os.remove(photo)
-        print("Image is posted.")
-    else:
-        print("Image not found.")
+
+    while not tweeted:
+        try:
+            im = Image.open(photo)
+            w,h = im.size
+            print(w)
+            print(h)
+            api.update_with_media(photo, status=message)
+            print("Image tweeted successfully.")
+            tweeted = True
+
+        except tweepy.error.TweepError:
+            print("Resizing image...")
+            im = Image.open(photo)
+            width, height = im.size
+            print(width)
+            print(height)
+            im_resize = im.resize((int(width*0.99999999999), int(height*0.99999999999)), Image.ANTIALIAS)
+            im_resize.save(photo)
+
 
 
 
